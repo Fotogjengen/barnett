@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  db:
+    container_name: database
+    image: postgres
+    hostname: db
+    environment:
+      GET_HOST_FROM: dns
+      POSTGRES_DB: dev
+      POSTGRES_USER: postgres-dev
+      POSTGRES_PASSWORD: qwer1234
+    ports:
+      - 5432:5432
+    networks:
+      - api_network
+
+  api:
+    container_name: api
+    hostname: api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      GET_HOSTS_FROM: dns
+    networks:
+      - api_network
+    volumes:
+      - .:/go/src/barnett/api
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    links:
+      - db
+
+networks:
+  api_network:
+    driver: bridge
