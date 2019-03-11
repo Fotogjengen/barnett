@@ -19,8 +19,8 @@ services:
     container_name: api
     hostname: api
     build:
-      context: .
-      dockerfile: Dockerfile
+      context: api
+      dockerfile: api/Dockerfile
     environment:
       GET_HOSTS_FROM: dns
     networks:
