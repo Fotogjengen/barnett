@@ -7,10 +7,11 @@ import (
 )
 
 const (
-	DBHOST = "db"
-	DBUSER = "postgres-dev"
-	DBPASS = "qwer1234"
-	DBNAME = "dev"
+	DBHOST = "localhost"
+	DBPORT = 5432
+	DBUSER = "postgres"
+	DBPASS = ""
+	DBNAME = "barnett_db"
 )
 
 var DB *sql.DB // Global variable
@@ -20,7 +21,7 @@ func Connect() {
 	Returns sql.Db pointer
 	Connects to database defined in constants
 	*/
-	dbInfo := fmt.Sprintf("host=%s user=%s password=%s dbname=%s sslmode=disable", DBHOST, DBUSER, DBPASS, DBNAME)
+	dbInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable", DBHOST, DBPORT, DBUSER, DBNAME)
 	db, err := sql.Open("postgres", dbInfo)
 	if err != nil {
 		panic(err)

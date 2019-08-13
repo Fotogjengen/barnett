@@ -25,7 +25,19 @@ func Query(q string) *sql.Rows {
 	return rows
 }
 
-func Insert(q string) {
+func QueryOne(q string) *sql.Row {
+	stmt, err := DB.Prepare(q)
+	if err != nil {
+		log.Fatal(err)
+		return nil
+	}
+	defer stmt.Close()
+
+	row := stmt.QueryRow()
+	return row
+}
+
+func Insert(q string) error {
 	stmt, err := DB.Prepare(q)
 	if err != nil {
 		log.Fatal(err)
@@ -34,6 +46,7 @@ func Insert(q string) {
 
 	_, err = stmt.Exec()
 	if err != nil {
-		panic(err)
+		return err
 	}
+	return nil
 }

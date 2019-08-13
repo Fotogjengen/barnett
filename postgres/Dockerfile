@@ -1,5 +1,5 @@
-FROM postgres:9.4
+FROM postgres:11
 MAINTAINER Caroline Sandsbråten <carolinesandsbraten@gmail.com>
 
-COPY *.sql /docker-entrypoint-initdb.d/
+COPY postgres/sql/*.sql /docker-entrypoint-initdb.d/
 

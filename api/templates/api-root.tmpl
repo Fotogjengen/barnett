@@ -1,0 +1,13 @@
+{{ define "api-root.tmpl" }}
+
+    <html>
+        {{ range .paths }}
+            <ul>
+                <li>
+                    {{ .Name }} : <a href="{{ .Path }}"> {{ .Path }} </a>
+                </li>
+            </ul>
+        {{ end }}
+    </html>
+
+{{ end }}

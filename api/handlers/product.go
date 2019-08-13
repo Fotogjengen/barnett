@@ -2,38 +2,59 @@ package handlers
 
 import (
 	"barnett/api/database"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
 
 type Product struct {
-	Name string `json:"name" binding:"required"`
-	Price int `json:"price" binding:"required"`
+	ID       int      `json:"id" binding:"required"`
+	Name     string   `json:"name" binding:"required"`     // Product name (unique)
+	Price    int      `json:"price" binding:"required"`    // Sell price per unit
+	Category Category `json:"category" binding:"required"` // Category (such as "40% sprit, øl, etc.")
 }
 
-
 func getProducts() ([]Product, error) {
-	const q = `SELECT name, price FROM products LIMIT 100;`
+	/*
+	Private function
+	Returns results and errors from DB
+	*/
+	const q = `SELECT
+					c.id AS category_id,
+					c.name AS category,
+					p.id AS id,
+					p.name AS name,
+					p.price AS price
+				FROM
+					categories AS c INNER JOIN products AS p
+					on p.category = c.id;`
 	rows := database.Query(q)
 	results := make([]Product, 0)
 
 	for rows.Next() { // Loop through all DB rows
+		var categoryId int
+		var categoryName string
+		var id int
 		var name string
 		var price int
-		err := rows.Scan(&name, &price)
+		err := rows.Scan(&categoryId, &categoryName, &id, &name, &price)
 		if err != nil {
 			return nil, err
 		}
-		results = append(results, Product{name, price})
+		results = append(results, Product{id, name, price, Category{categoryId, categoryName}})
 	}
+	fmt.Println(results)
 	return results, nil
 }
 
 func addProduct(product Product) error {
-	/*const q = `INSERT INTO products (name, price) VALUES ($1, $2);`
-	_, err := database.DB.Exec(q, product.Name, product.Price)
-	return err*/
-	return nil
+	/*
+	Private function
+	Returns error, inserts new product into
+	*/
+	const q = `INSERT INTO products (name, price, category) VALUES ($1, $2, $3);`
+	_, err := database.DB.Exec(q, product.Name, product.Price, product.Category)
+	return err
 }
 
 // Public functions with Gin
@@ -57,5 +78,3 @@ func AddProduct(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{"status": "ok"})
 	}
 }
-
-
